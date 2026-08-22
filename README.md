@@ -32,7 +32,7 @@ Open [http://localhost:5173](http://localhost:5173). API calls are proxied to `l
 ## Build for production
 
 ```sh
-npm run build   # outputs to dist/
+npm run build
 ```
 
 Serve `dist/` behind any static file server (nginx, Caddy, etc.) with `/api/*` proxied to the MoA Chain node.
