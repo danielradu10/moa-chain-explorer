@@ -1,11 +1,11 @@
 import { Link, NavLink } from 'react-router-dom'
 import { Separator } from '@/components/ui/separator'
-import { useLiveRound } from '@/hooks/useLiveRound'
+import { useLiveRoundContext } from '@/contexts/LiveRoundContext'
 
-const MINI_ROUND_LABEL: Record<number, string> = { 1: 'MR1', 2: 'MR2', 3: 'MR3' }
+const MINI_ROUND_LABEL: Record<number, string> = { 0: 'MR1', 1: 'MR2', 2: 'MR3' }
 
 export function Navbar() {
-  const { data: live, connected } = useLiveRound()
+  const { live, connected } = useLiveRoundContext()
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-zinc-200">
@@ -62,9 +62,8 @@ export function Navbar() {
                 </span>
                 <span className="font-mono text-xs text-zinc-600">
                   Round {live.round}
-                  {live.mini_round > 0 && (
-                    <> · <span className="text-zinc-900 font-medium">{MINI_ROUND_LABEL[live.mini_round] ?? `MR${live.mini_round}`}</span></>
-                  )}
+                  {' · '}
+                  <span className="text-zinc-900 font-medium">{MINI_ROUND_LABEL[live.mini_round] ?? `MR${live.mini_round + 1}`}</span>
                   {' · '}
                   <span className="text-zinc-500">{live.step}</span>
                 </span>
