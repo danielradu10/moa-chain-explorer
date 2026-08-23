@@ -30,6 +30,7 @@ export function Navbar() {
           <nav className="flex items-center gap-1">
             {[
               { to: '/', label: 'Dashboard' },
+              { to: '/rounds', label: 'Rounds' },
               { to: '/transactions', label: 'Transactions' },
               { to: '/transactions/submit', label: 'Submit' },
             ].map(({ to, label }) => (
@@ -53,7 +54,10 @@ export function Navbar() {
           {/* Live round ticker — right-aligned */}
           <div className="ml-auto flex items-center gap-2.5">
             {live ? (
-              <div className="flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1">
+              <Link
+                to={`/rounds/${live.round}`}
+                className="flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 transition-colors hover:border-zinc-300 hover:bg-zinc-100"
+              >
                 <span className="relative flex h-1.5 w-1.5">
                   {connected && (
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -67,7 +71,7 @@ export function Navbar() {
                   {' · '}
                   <span className="text-zinc-500">{live.step}</span>
                 </span>
-              </div>
+              </Link>
             ) : (
               <div className="flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1">
                 <span className="relative flex h-1.5 w-1.5">

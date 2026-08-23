@@ -10,11 +10,16 @@ import { SynthesisVotes } from '@/components/tx/SynthesisVotes'
 import { useTxEvents } from '@/hooks/useTxEvents'
 import { Skeleton } from '@/components/ui/skeleton'
 
-function Field({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
+function Field({ label, value, mono = false, linkTo }: { label: string; value: string; mono?: boolean; linkTo?: string }) {
   return (
     <div className="px-6 py-3">
       <dt className="mb-1 text-[11px] uppercase tracking-widest text-zinc-400">{label}</dt>
-      <dd className={`break-words text-sm text-zinc-700 ${mono ? 'font-mono' : ''}`}>{value}</dd>
+      <dd className={`break-words text-sm text-zinc-700 ${mono ? 'font-mono' : ''}`}>
+        {linkTo
+          ? <Link to={linkTo} className="text-zinc-700 underline decoration-zinc-300 underline-offset-2 hover:text-zinc-900 transition-colors">{value}</Link>
+          : value
+        }
+      </dd>
     </div>
   )
 }
@@ -47,12 +52,13 @@ export function TxDetail() {
   }
 
   const detailRows = [
-    { label: 'Sender',       value: tx.sender,       mono: false },
-    { label: 'Prompt',       value: tx.prompt,        mono: false },
-    { label: 'Labels',       value: tx.labels?.join(', '), mono: false },
-    { label: 'Block',        value: tx.block_hash,    mono: true  },
-    { label: 'Local Answer', value: tx.local_answer,  mono: false },
-  ].filter((r): r is { label: string; value: string; mono: boolean } => !!r.value)
+    { label: 'Sender',       value: tx.sender,              mono: false },
+    { label: 'Prompt',       value: tx.prompt,              mono: false },
+    { label: 'Labels',       value: tx.labels?.join(', '),  mono: false },
+    { label: 'Round',        value: tx.round != null ? `#${tx.round}` : undefined, mono: true, linkTo: tx.round != null ? `/rounds/${tx.round}` : undefined },
+    { label: 'Block',        value: tx.block_hash,          mono: true  },
+    { label: 'Local Answer', value: tx.local_answer,        mono: false },
+  ].filter((r): r is { label: string; value: string; mono: boolean; linkTo?: string } => !!r.value)
 
   return (
     <div className="space-y-6">

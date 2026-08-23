@@ -45,6 +45,14 @@ export interface MR3Response {
   final_answers: FinalAnswerSummary[]
 }
 
+export interface RoundSummary {
+  round: number
+  epoch: number
+  status: string
+  tx_count: number
+  block_hash?: string
+}
+
 export interface RoundResponse {
   round: number
   epoch: number
@@ -95,6 +103,7 @@ export interface ValidatorLabelVote {
 export interface TransactionResponse {
   tx_hash: string
   status: TxStatus
+  round?: number
   sender?: string
   prompt?: string
   labels?: string[]
@@ -145,6 +154,7 @@ export const api = {
 
   getBlock: (hash: string) => get<BlockResponse>(`/blocks/${hash}`),
 
+  getRounds: () => get<RoundSummary[]>('/rounds'),
   getRound: (round: number) => get<RoundResponse>(`/rounds/${round}`),
 
   getLiveRound: () => get<LiveRoundResponse>('/round/current'),

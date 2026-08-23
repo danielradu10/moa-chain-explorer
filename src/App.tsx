@@ -6,6 +6,8 @@ import { TxList } from '@/pages/TxList'
 import { TxSubmit } from '@/pages/TxSubmit'
 import { TxDetail } from '@/pages/TxDetail'
 import { ValidatorAnswerDetail } from '@/pages/ValidatorAnswerDetail'
+import { RoundList } from '@/pages/RoundList'
+import { RoundDetail } from '@/pages/RoundDetail'
 
 export default function App() {
   return (
@@ -19,6 +21,8 @@ export default function App() {
             <Route path="/transactions/submit"                             element={<TxSubmit />}              />
             <Route path="/transactions/:hash"                              element={<TxDetail />}              />
             <Route path="/transactions/:hash/validators/:validatorId"      element={<ValidatorAnswerDetail />} />
+            <Route path="/rounds"                                          element={<RoundList />}             />
+            <Route path="/rounds/:round"                                   element={<RoundDetail />}           />
           </Routes>
         </main>
       </div>
