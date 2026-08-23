@@ -104,6 +104,8 @@ export interface TransactionResponse {
   final_status?: string
   validator_answers?: ValidatorAnswer[]
   label_votes?: ValidatorLabelVote[]
+  synthesis_proposer?: string
+  synthesis_approvers?: string[]
 }
 
 export interface SubmitTransactionRequest {

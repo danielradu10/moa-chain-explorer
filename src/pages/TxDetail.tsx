@@ -6,6 +6,7 @@ import { TxProgress } from '@/components/tx/TxProgress'
 import { TxTimeline } from '@/components/tx/TxTimeline'
 import { ValidatorAnswers } from '@/components/tx/ValidatorAnswers'
 import { ValidatorLabels } from '@/components/tx/ValidatorLabels'
+import { SynthesisVotes } from '@/components/tx/SynthesisVotes'
 import { useTxEvents } from '@/hooks/useTxEvents'
 import { Skeleton } from '@/components/ui/skeleton'
 
@@ -105,6 +106,14 @@ export function TxDetail() {
       {/* Per-validator answers — only when finalized with MR2 data */}
       {tx.validator_answers && tx.validator_answers.length > 0 && (
         <ValidatorAnswers txHash={tx.tx_hash} answers={tx.validator_answers} />
+      )}
+
+      {/* MR3 synthesis votes */}
+      {tx.synthesis_proposer && (
+        <SynthesisVotes
+          proposer={tx.synthesis_proposer}
+          approvers={tx.synthesis_approvers ?? []}
+        />
       )}
 
       {/* Final answer — only when present */}
