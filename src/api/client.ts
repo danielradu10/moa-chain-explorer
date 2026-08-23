@@ -68,6 +68,30 @@ export interface BlockResponse {
 
 export type TxStatus = 'SUBMITTED' | 'PREPROCESSING' | 'PENDING' | 'FINALIZED'
 
+export type AnswerCategory = 'CORRECT' | 'HALLUCINATION' | 'MALICIOUS' | 'WRONG' | ''
+
+export interface JudgeVerdict {
+  judge_id: string
+  category: AnswerCategory
+}
+
+export interface ValidatorAnswer {
+  validator_id: string
+  answer: string
+  category: AnswerCategory
+  consumption?: number
+  correct_votes: number
+  hallucination_votes: number
+  malicious_votes: number
+  wrong_votes: number
+  judge_verdicts?: JudgeVerdict[]
+}
+
+export interface ValidatorLabelVote {
+  validator_id: string
+  labels: string[]
+}
+
 export interface TransactionResponse {
   tx_hash: string
   status: TxStatus
@@ -78,6 +102,8 @@ export interface TransactionResponse {
   block_hash?: string
   final_answer?: string
   final_status?: string
+  validator_answers?: ValidatorAnswer[]
+  label_votes?: ValidatorLabelVote[]
 }
 
 export interface SubmitTransactionRequest {

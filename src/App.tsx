@@ -5,6 +5,7 @@ import { Dashboard } from '@/pages/Dashboard'
 import { TxList } from '@/pages/TxList'
 import { TxSubmit } from '@/pages/TxSubmit'
 import { TxDetail } from '@/pages/TxDetail'
+import { ValidatorAnswerDetail } from '@/pages/ValidatorAnswerDetail'
 
 export default function App() {
   return (
@@ -13,10 +14,11 @@ export default function App() {
         <Navbar />
         <main className="mx-auto max-w-7xl px-6 py-10">
           <Routes>
-            <Route path="/"                       element={<Dashboard />} />
-            <Route path="/transactions"           element={<TxList />}   />
-            <Route path="/transactions/submit"    element={<TxSubmit />} />
-            <Route path="/transactions/:hash"     element={<TxDetail />} />
+            <Route path="/"                                                element={<Dashboard />}             />
+            <Route path="/transactions"                                    element={<TxList />}                />
+            <Route path="/transactions/submit"                             element={<TxSubmit />}              />
+            <Route path="/transactions/:hash"                              element={<TxDetail />}              />
+            <Route path="/transactions/:hash/validators/:validatorId"      element={<ValidatorAnswerDetail />} />
           </Routes>
         </main>
       </div>
