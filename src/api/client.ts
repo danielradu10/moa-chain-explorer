@@ -1,6 +1,85 @@
 // Typed API client for the MoA Chain explorer API.
 // All fetch calls go through the Vite proxy (/api → localhost:8080).
 
+export interface HealthResponse {
+  status: string
+  chain_length: number
+  current_round: number
+  current_mini_round: number
+  current_epoch: number
+}
+
+export interface TxSummary {
+  tx_hash: string
+  sender: string
+  prompt: string
+  labels?: string[]
+}
+
+export interface TxClassificationSummary {
+  tx_hash: string
+  status: string
+  correct_count: number
+}
+
+export interface FinalAnswerSummary {
+  tx_hash: string
+  status: string
+  answer?: string
+}
+
+export interface MR1Response {
+  block_hash: string
+  transactions: TxSummary[]
+  subdomains_frequency: Record<string, number>
+  non_related_tx_hashes?: string[]
+}
+
+export interface MR2Response {
+  block_hash: string
+  answer_classifications: TxClassificationSummary[]
+}
+
+export interface MR3Response {
+  block_hash: string
+  final_answers: FinalAnswerSummary[]
+}
+
+export interface RoundResponse {
+  round: number
+  epoch: number
+  status: string
+  mr1?: MR1Response
+  mr2?: MR2Response
+  mr3?: MR3Response
+}
+
+export interface BlockResponse {
+  header_hash: string
+  previous_hash: string
+  round: number
+  epoch: number
+  transactions: TxSummary[]
+  subdomains_frequency?: Record<string, number>
+  non_related_tx_hashes?: string[]
+  answer_classifications?: TxClassificationSummary[]
+  final_answers?: FinalAnswerSummary[]
+}
+
+export type TxStatus = 'SUBMITTED' | 'PREPROCESSING' | 'PENDING' | 'FINALIZED'
+
+export interface TransactionResponse {
+  tx_hash: string
+  status: TxStatus
+  sender?: string
+  prompt?: string
+  labels?: string[]
+  local_answer?: string
+  block_hash?: string
+  final_answer?: string
+  final_status?: string
+}
+
 export interface SubmitTransactionRequest {
   sender: string
   prompt: string
@@ -13,42 +92,7 @@ export interface SubmitTransactionResponse {
   timestamp: number
 }
 
-export interface TransactionResponse {
-  tx_hash: string
-  sender: string
-  prompt: string
-  status: string
-  labels?: string[]
-  final_answer?: string
-  final_status?: string
-  block_hash?: string
-}
-
-export interface BlockResponse {
-  header_hash: string
-  previous_hash: string
-  round: number
-  epoch: number
-  transactions: TransactionResponse[]
-}
-
-export interface RoundResponse {
-  round: number
-  epoch: number
-  status: string
-  mr1?: unknown
-  mr2?: unknown
-  mr3?: unknown
-}
-
 export interface LiveRoundResponse {
-  epoch: number
-  round: number
-  mini_round: number
-  step: string
-}
-
-export interface StepEvent {
   epoch: number
   round: number
   mini_round: number
@@ -57,7 +101,7 @@ export interface StepEvent {
 
 export interface TxEvent {
   tx_hash: string
-  status: string
+  status: TxStatus
 }
 
 const BASE = '/api/v1'
@@ -65,11 +109,11 @@ const BASE = '/api/v1'
 async function get<T>(path: string): Promise<T> {
   const res = await fetch(BASE + path)
   if (!res.ok) throw new Error(`GET ${path} → ${res.status}`)
-  return res.json()
+  return res.json() as Promise<T>
 }
 
 export const api = {
-  health: () => get<{ status: string }>('/health'),
+  health: () => get<HealthResponse>('/health'),
 
   getBlock: (hash: string) => get<BlockResponse>(`/blocks/${hash}`),
 
@@ -88,27 +132,6 @@ export const api = {
       body: JSON.stringify(req),
     })
     if (!res.ok) throw new Error(`POST /transactions → ${res.status}`)
-    return res.json()
-  },
-
-  // streamRound opens an SSE connection for live round step events.
-  // Returns an unsubscribe function that closes the connection.
-  streamRound: (onEvent: (e: StepEvent) => void): (() => void) => {
-    const es = new EventSource(`${BASE}/round/stream`)
-    es.onmessage = (e) => {
-      try { onEvent(JSON.parse(e.data)) } catch { /* ignore malformed */ }
-    }
-    return () => es.close()
-  },
-
-  // streamTx opens an SSE connection for a single tx's lifecycle events.
-  // The server closes the stream when the tx reaches FINALIZED.
-  // Returns an unsubscribe function.
-  streamTx: (hash: string, onEvent: (e: TxEvent) => void): (() => void) => {
-    const es = new EventSource(`${BASE}/transactions/${hash}/events`)
-    es.onmessage = (e) => {
-      try { onEvent(JSON.parse(e.data)) } catch { /* ignore malformed */ }
-    }
-    return () => es.close()
+    return res.json() as Promise<SubmitTransactionResponse>
   },
 }
